@@ -129,6 +129,7 @@ srand
 sscanf
 macOS
 Fibonacci
+fibonacci
 fib
 pow
 Binet

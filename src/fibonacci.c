@@ -91,25 +91,41 @@ void fibonacci_iterative_256(u256 *f, int n)
     }
 }
 
-static inline void _fibonacci_iterative_128_mixing(int n, u128 *a, u128 *b)
+static inline void _fibonacci_iterative_64_mixing(int n, struct mixing *mix)
 {
+    u64 *a = &(mix->a.ui64), *b = &(mix->b.ui64);
     for (size_t i = 2; i <= (size_t) n; i++) {
+        u64 f = *a + *b;
+        *a = *b;
+        *b = f;
+    };
+}
+
+static inline void _fibonacci_iterative_128_mixing(int n, struct mixing *mix)
+{
+    _fibonacci_iterative_64_mixing(93, mix);
+    u128 *a = &(mix->a.ui128), *b = &(mix->b.ui128);
+    for (size_t i = 94; i <= (size_t) n; i++) {
         u128 f = *a + *b;
         *a = *b;
         *b = f;
     };
 }
 
-static inline void _fibonacci_iterative_256_mixing(int n, u256 *a, u256 *b)
+static inline void _fibonacci_iterative_256_mixing(int n, struct mixing *mix)
 {
+    u256 *a = &(mix->a.ui256), *b = &(mix->b.ui256);
     if (n > 370) {
+        a->low = UINT128_MAX;
+        a->high = UINT128_MAX;
         b->low = UINT128_MAX;
         b->high = UINT128_MAX;
-
+    } else if (n <= 93) {
+        _fibonacci_iterative_64_mixing(n, mix);
     } else if (n <= 186) {
-        _fibonacci_iterative_128_mixing(n, &(a->low), &(b->low));
+        _fibonacci_iterative_128_mixing(n, mix);
     } else {
-        _fibonacci_iterative_128_mixing(186, &(a->low), &(b->low));
+        _fibonacci_iterative_128_mixing(186, mix);
         u256 f;
         for (size_t i = 187; i <= (size_t) n; i++) {
             ui256_add(&f, a, b);
@@ -125,9 +141,12 @@ void fibonacci_iterative_mixing(u256 *f, int n)
         ui256_set_ui(f, 0);
         return;
     }
-    u256 a = {.low = 0, .high = 0};
-    ui256_set_ui(f, 1);
-    _fibonacci_iterative_256_mixing(n, &a, f);
+    struct mixing mix = {.a.ui256.low = 0,
+                         .a.ui256.high = 0,
+                         .b.ui256.low = 1,
+                         .b.ui256.high = 0};
+    _fibonacci_iterative_256_mixing(n, &mix);
+    ui256_set(f, &(mix.b.ui256));
 }
 
 static inline void _fib_doubling_64(unsigned int n, u64 *a, u64 *b)
@@ -265,13 +284,20 @@ size_t fibonacci_doubling_mixing2(unsigned int n,
 {
     size_t mask = 1 << (count);
     size_t i = 0;
-    f->a.ui256.low = 1;
-    f->a.ui256.high = 0;
-    f->b.ui256.low = 1;
-    f->b.ui256.high = 0;
+
     union union_mixing256 c, d;
-    c.ui256.high = 0;
-    d.ui256.high = 0;
+
+    u256 *a256 = &(f->a.ui256), *b256 = &(f->b.ui256);
+    u256 *c256 = &(c.ui256), *d256 = &(d.ui256);
+
+    a256->low = 1;
+    a256->high = 0;
+    b256->low = 1;
+    b256->high = 0;
+
+    c256->high = 0;
+    d256->high = 0;
+
     // n <= 93, 64 bits
     size_t bits = (count <= 5) ? count : 5;
     for (; i < bits; i++) {
@@ -311,21 +337,21 @@ size_t fibonacci_doubling_mixing2(unsigned int n,
     for (; i < max_count; i++) {
         mask >>= 1;
         // c = a * ((b << 1) - a)
-        ui256_add(&c.ui256, &f->b.ui256, &f->b.ui256);
-        ui256_sub(&c.ui256, &c.ui256, &f->a.ui256);
-        ui256_mul(&c.ui256, c.ui256.low, f->a.ui256.low);
+        ui256_add(c256, b256, b256);
+        ui256_sub(c256, c256, a256);
+        ui256_mul(c256, c256->low, a256->low);
 
         // d = a^2 + b^2
-        ui256_mul(&f->a.ui256, f->a.ui256.low, f->a.ui256.low);
-        ui256_mul(&f->b.ui256, f->b.ui256.low, f->b.ui256.low);
-        ui256_add(&d.ui256, &f->a.ui256, &f->b.ui256);
+        ui256_mul(a256, a256->low, a256->low);
+        ui256_mul(b256, b256->low, b256->low);
+        ui256_add(d256, a256, b256);
 
         if (n & mask) {
-            ui256_set(&f->a.ui256, &d.ui256);
-            ui256_add(&f->b.ui256, &c.ui256, &d.ui256);
+            ui256_set(a256, d256);
+            ui256_add(b256, c256, d256);
         } else {
-            ui256_set(&f->a.ui256, &c.ui256);
-            ui256_set(&f->b.ui256, &d.ui256);
+            ui256_set(a256, c256);
+            ui256_set(b256, d256);
         }
     }
     return i;
