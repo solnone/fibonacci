@@ -1,0 +1,2 @@
+EXTRA_DIST=Fibonacci.java expected_256.txt fibonacci.jl fibonacci_clz.jl fibonacci.js fibonacci.pl fibonacci.py fibonacci_Binet.jl fibonacci_Dict.jl fibonacci_Dict.js fibonacci_Dict.pl fibonacci_Dict.py test_fib.sh test_fib_doubling_gmp.sh test_fib_doubling_gmp_cpp.sh test_fib_iterative_gmp.sh test_main.sh test_fib_doubling_mixing.sh
+TESTS=test_main.sh test_fib.sh test_fib_doubling_gmp.sh test_fib_doubling_gmp_cpp.sh test_fib_iterative_gmp.sh test_main.sh test_fib_doubling_mixing.sh
