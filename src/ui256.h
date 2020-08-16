@@ -1,7 +1,9 @@
 #pragma once
 #include <stddef.h>
 #include <stdint.h>
-
+#ifdef __MACH__
+#include <string.h>
+#else
 /*
  * fls: find last (most-significant) bit set.
  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
@@ -10,7 +12,7 @@ static __inline__ int fls(unsigned int x)
 {
     return 32 - __builtin_clz(x);
 }
-
+#endif
 typedef uint64_t u64;
 typedef unsigned __int128 u128;
 struct uint256 {

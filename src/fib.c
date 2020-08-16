@@ -1,4 +1,6 @@
+#include <stdbool.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "fibonacci.h"
 #include "fibonacci_io.h"
 
@@ -103,21 +105,12 @@ static void fib_recursion_256(int n, int out_time)
 static inline fib_f get_function(int mode, int bits, int n1, int n2)
 {
     switch (mode) {
-    case 0:
-        printf("%d bits doubling F(%d)-F(%d):\n", bits, n1, n2);
-        switch (bits) {
-        case 64:
-            return &fib_doubling_64;
-        case 128:
-            return &fib_doubling_128;
-        case 256:
-            return &fib_doubling_256;
-        default:
-            return &fib_doubling_mixing;
-        }
-        break;
     case 1:
-        printf("%d bits iterative F(%d)-F(%d):\n", bits, n1, n2);
+        if (bits == 0) {
+            printf("Mixing bits doubling F(%d)-F(%d):\n", n1, n2);
+        } else {
+            printf("%d bits doubling F(%d)-F(%d):\n", bits, n1, n2);
+        }
         switch (bits) {
         case 64:
             return &fib_iterative_64;
@@ -129,29 +122,34 @@ static inline fib_f get_function(int mode, int bits, int n1, int n2)
             return &fib_iterative_mixing;
         }
         break;
-    case 2:
+
+    case 0:
     default:
-        printf("256 bits recursion F(%d)-F(%d):\n", n1, n2);
-        return &fib_recursion_256;
+        if (bits == 0) {
+            printf("Mixing bits doubling F(%d)-F(%d):\n", n1, n2);
+        } else {
+            printf("%d bits doubling F(%d)-F(%d):\n", bits, n1, n2);
+        }
+        switch (bits) {
+        case 64:
+            return &fib_doubling_64;
+        case 128:
+            return &fib_doubling_128;
+        case 256:
+            return &fib_doubling_256;
+        default:
+            return &fib_doubling_mixing;
+        }
         break;
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int n1, n2;
-    int bits = (argc > 3) ? atoi(argv[3]) : 256;
-    int max = get_max_number_by_bits(bits);
-    int out_time = (argc > 4) ? atoi(argv[4]) : 0;
-    int mode = (argc > 5) ? atoi(argv[5]) : 0;
-
-    cmd_parse(&n1, &n2, max, argc, argv);
-    if (out_time) {
-        printf("log the spend time in stderr: number time(ns)\n");
-    }
-
-    fib_f func = get_function(mode, bits, n1, n2);
-    for (int n = n1; n <= n2; n++) {
-        func(n, out_time);
+    struct fib_params p;
+    cmd_getopt(&p, argc, argv);
+    fib_f func = get_function(p.mode, p.bits, p.n1, p.n2);
+    for (int n = p.n1; n <= p.n2; n++) {
+        func(n, p.out_time);
     }
 }

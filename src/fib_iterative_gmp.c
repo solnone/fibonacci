@@ -12,10 +12,10 @@
 
 int main(int argc, char *argv[])
 {
-    mpz_t x;
-    mpz_init(x);
     int start, end;
     cmd_parse(&start, &end, -1, argc, argv);
+    mpz_t x;
+    mpz_init(x);
     for (int n = start; n <= end; n++) {
         fibonacci_iterative_gmp(x, n);
         gmp_printf("%Zd\n", x);

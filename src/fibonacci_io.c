@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 /*
  * References
@@ -104,5 +106,84 @@ void cmd_parse(int *start, int *end, int max, int argc, char *argv[])
         if (*end > max) {
             *end = max;
         }
+    }
+}
+
+static void usage(char *cmd)
+{
+    printf("Usage: %s [-h] [-s start][-e end][-b bits][-t][-m mode]\n", cmd);
+    printf("\t-h         Print this information\n");
+    printf("\t-s start   Start number, default: 0\n");
+    printf("\t-e end     End number, default: 370\n");
+    printf("\t-b bits    Use bits: 0, 64, 128, 256, default: 0 -> mixing\n");
+    printf("\t-t         Calculate the execution time of a method\n");
+    printf("\t-m method  Method: doubling, iterative, default: doubling\n");
+    exit(0);
+}
+
+#define BUFSIZE 256
+void cmd_getopt(struct fib_params *p, int argc, char *argv[])
+{
+    p->n1 = 0;
+    p->bits = 0;
+    p->mode = 0;
+    p->out_time = false;
+    if (1 < argc) {
+        p->n2 = 370;
+        char buf[BUFSIZE];
+        buf[BUFSIZE - 1] = '\0';
+        int ch;
+        while ((ch = getopt(argc, argv, "hs:e:b:tm:")) != -1) {
+            switch (ch) {
+            case 'h':
+                usage(argv[0]);
+                break;
+            case 's':
+                p->n1 = atoi(strncpy(buf, optarg, BUFSIZE - 1));
+                break;
+            case 'e':
+                p->n2 = atoi(strncpy(buf, optarg, BUFSIZE - 1));
+                break;
+            case 'b':
+                p->bits = atoi(strncpy(buf, optarg, BUFSIZE - 1));
+                break;
+            case 't':
+                p->out_time = true;
+                break;
+            case 'm':
+                strncpy(buf, optarg, BUFSIZE - 1);
+                if (strcmp("iterative", buf) == 0) {
+                    p->mode = 1;
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    } else {
+        p->n2 = 0;
+        printf("Fibonacci number F(n)\ninput n: ");
+        if (scanf("%d", &p->n1) != 1) {
+            p->n1 = 0;
+        }
+        printf("\n");
+    }
+
+
+    int max = get_max_number_by_bits(p->bits);
+    if (p->n1 < 0) {
+        p->n1 = 0;
+    }
+    if (max < p->n1) {
+        p->n1 = max;
+    }
+    if (p->n2 < p->n1) {
+        p->n2 = p->n1;
+    }
+    if (max < p->n2) {
+        p->n2 = max;
+    }
+    if (p->out_time) {
+        printf("log the spend time in stderr: number time(ns)\n");
     }
 }
