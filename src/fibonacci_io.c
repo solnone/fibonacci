@@ -6,6 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 
+int cmp(const void *p1, const void *p2)
+{
+    return *(long long *) p1 - *(long long *) p2;
+}
+
 /*
  * References
  * https://stackoverflow.com/questions/11656241/how-to-print-uint128-t-number-using-gcc

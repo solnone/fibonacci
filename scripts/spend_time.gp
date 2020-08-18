@@ -3,7 +3,7 @@ set title "runtime O(n)"
 set xlabel "size 400"
 set ylabel "time(ns)"
 set key left top
-set term png enhanced font "Verdana,10"
+set term png enhanced size 1024,768
 set output "plot/spend_time.png"
 plot [:400][:] \
 "plot/fib_doubling_gmp.dat" title "doubling gmp" with linespoints, \

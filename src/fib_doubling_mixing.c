@@ -58,11 +58,16 @@ void doubling_mixing(mpz_t value, int n)
 
 void doubling_mixing_time_proxy(mpz_t value, int n)
 {
-    CLOCK_TIME t1, t2;
-    CLOCK_GETTIME(t1);
-    doubling_mixing(value, n);
-    CLOCK_GETTIME(t2);
-    fprintf(stderr, "%d %lld\n", n, GETTIME(t2) - GETTIME(t1));
+    long long times[REPEAT_TIME];
+    for (size_t i = 0; i < REPEAT_TIME; i++) {
+        CLOCK_TIME t1, t2;
+        CLOCK_GETTIME(t1);
+        doubling_mixing(value, n);
+        CLOCK_GETTIME(t2);
+        times[i] = GETTIME(t2) - GETTIME(t1);
+    }
+    qsort(times, REPEAT_TIME, sizeof(long long), cmp);
+    fprintf(stderr, "%d %lld\n", n, times[REPEAT_TIME >> 1]);
 }
 
 int main(int argc, char *argv[])
