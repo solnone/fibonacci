@@ -4,6 +4,12 @@
 
 #define UINT128_MAX (u128) ~0
 
+#define RETURN_IF_NULL(obj, ret_val) \
+    do {                             \
+        if (!(obj))                  \
+            return ret_val;          \
+    } while (0)
+
 static inline int get_max_number_by_bits(int bits)
 {
     switch (bits) {

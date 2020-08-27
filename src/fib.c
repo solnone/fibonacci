@@ -135,9 +135,9 @@ static inline fib_f get_function(int mode, int bits, int n1, int n2)
     switch (mode) {
     case 1:
         if (bits == 0) {
-            printf("Mixing bits doubling F(%d)-F(%d):\n", n1, n2);
+            printf("Mixing bits iterative F(%d)-F(%d):\n", n1, n2);
         } else {
-            printf("%d bits doubling F(%d)-F(%d):\n", bits, n1, n2);
+            printf("%d bits iterative F(%d)-F(%d):\n", bits, n1, n2);
         }
         switch (bits) {
         case 64:

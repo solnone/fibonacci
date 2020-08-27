@@ -39,10 +39,10 @@ void fibonacci_recursion_256(u256 *f, int n)
  */
 u64 fibonacci_iterative_64(int n)
 {
-    if (n > 93)
-        return ~0;
-    if (n < 2)
-        return n;
+    RETURN_IF_NULL(n <= 93, ~0);
+
+    RETURN_IF_NULL(n >= 2, n);
+
     u64 a = 0, b = 1, f;
     for (size_t i = 2; i <= (size_t) n; i++) {
         f = a + b;
@@ -54,11 +54,9 @@ u64 fibonacci_iterative_64(int n)
 
 u128 fibonacci_iterative_128(int n)
 {
-    if (n > 186)
-        return UINT128_MAX;
+    RETURN_IF_NULL(n <= 186, UINT128_MAX);
 
-    if (n < 2)
-        return n;
+    RETURN_IF_NULL(n >= 2, n);
 
     u128 a = 0, b = 1, f;
     for (size_t i = 2; i <= (size_t) n; i++) {
@@ -177,11 +175,10 @@ static inline void _fib_doubling_64(unsigned int n, u64 *a, u64 *b)
 
 u64 fibonacci_doubling_64(int n)
 {
-    if (n > 93)
-        return ~0;
+    RETURN_IF_NULL(n <= 93, ~0);
 
-    if (n < 2)
-        return n;
+    RETURN_IF_NULL(n >= 2, n);
+
     u64 a, b;
     _fib_doubling_64(n - 1, &a, &b);
     return b;
@@ -215,11 +212,10 @@ static inline void _fib_doubling_128(unsigned int n, u128 *a, u128 *b)
 
 u128 fibonacci_doubling_128(int n)
 {
-    if (n > 186)
-        return UINT128_MAX;
+    RETURN_IF_NULL(n <= 186, UINT128_MAX);
 
-    if (n < 2)
-        return n;
+    RETURN_IF_NULL(n >= 2, n);
+
     u128 a, b;
     _fib_doubling_128(n - 1, &a, &b);
     return b;
