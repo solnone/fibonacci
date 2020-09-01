@@ -9,119 +9,127 @@ and fibonacci(n) = fibonacci(n-1) + fibonacci(n-2),  per n > 1
 
 ## Build & Run Fibonacci 64, 128, 256 bits without other libraries
 
-```bash
-cc -Wall -Wextra -g -O3 -march=native -o src/fib src/fib.c src/fibonacci.c src/fibonacci_io.c
-echo 180 | src/fib
-src/fib 91 93 64
-src/fib 181 186 128
-src/fib 367 370 256
+```shell
+$ cc -Wall -Wextra -g -O3 -march=native -o src/fib src/fib.c src/fibonacci.c src/fibonacci_io.c
+$ echo 180 | src/fib
+$ src/fib -s 91 -e 93 -b 64
+$ src/fib -s 181 -e 186 -b 128
+$ src/fib -s 367 -e 370 -b 256
 ```
 
 ## Required libraries
 
 ### Ubuntu | Debian
-```bash
-sudo apt-get install git build-essential
-sudo apt-get install pkg-config gnuplot
-sudo apt-get install libgmp-dev libglib2.0-dev
-sudo apt-get install aspell clang-format cppcheck
-sudo apt-get install autotools-dev autoconf automake libtool
+
+```shell
+$ sudo apt-get install git build-essential
+$ sudo apt-get install pkg-config gnuplot
+$ sudo apt-get install libgmp-dev libglib2.0-dev
+$ sudo apt-get install aspell clang-format cppcheck
+$ sudo apt-get install autotools-dev autoconf automake libtool
 ```
 
 ### MacOS with Homebrew
-```bash
-xcode-select --install
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-brew install pkg-config gnuplot
-brew install gmp glib
-brew install aspell clang-format cppcheck
-brew install autoconf automake libtool
+```shell
+$ xcode-select --install
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+$ brew install pkg-config gnuplot
+$ brew install gmp glib
+$ brew install aspell clang-format cppcheck
+$ brew install autoconf automake libtool
 ```
 
 ## autoconf
 
-```bash
-autoreconf -ivf
+```shell
+$ autoreconf -ivf
 ```
 
 ## Build & Run Fibonacci with GMP library
-```bash
-cc -Wall -Wextra -g -O3 -march=native -o src/fib_doubling_mixing src/fib_doubling_mixing.c src/fibonacci.c src/fibonacci_gmp.c src/fibonacci_io.c -lgmp
-echo 2000 | src/fib_doubling_mixing
+
+```shell
+$ cc -Wall -Wextra -g -O3 -march=native -o src/fib_doubling_mixing src/fib_doubling_mixing.c src/fibonacci.c src/fibonacci_gmp.c src/fibonacci_io.c -lgmp
+$ echo 2000 | src/fib_doubling_mixing
 ```
 
 ## Configure and Make
-```bash
-CPPFLAGS="-Wall -Wextra -g -O3 -march=native" ./configure && make
+
+```shell
+$ CPPFLAGS="-Wall -Wextra -g -O3 -march=native" ./configure && make
 ```
 
 ## Run
-```bash
-echo 1000 | src/fib_doubling_gmp
-echo 1000 | src/fib_iterative_gmp
-echo 93 | src/main 183 187
+
+```shell
+$ echo 1000 | src/fib_doubling_gmp
+$ echo 1000 | src/fib_iterative_gmp
+$ src/main 183 187
 ```
 
 ## Tests
-```bash
-make check
+
+```shell
+$ make check
 ```
 
 ## Scripts
-```bash
-# python
-echo 99 | tests/fibonacci.py
-# perl
-echo 99 | tests/fibonacci.pl
-# javascript
-echo 99 | tests/fibonacci.js
-# julia
-echo 99 | tests/fibonacci.jl
+
+```shell
+$ # python
+$ echo 99 | tests/fibonacci.py
+$ # perl
+$ echo 99 | tests/fibonacci.pl
+$ # javascript
+$ echo 99 | tests/fibonacci.js
+$ # julia
+$ echo 99 | tests/fibonacci.jl
 ```
 
 ## Java
 
-```bash
-javac tests/Fibonacci.java
-echo 99 | java -cp tests Fibonacci
+```shell
+$ javac tests/Fibonacci.java
+$ echo 99 | java -cp tests Fibonacci
 ```
 
 ## Using AddressSanitizer
 
-```bash
-CC=clang CXX=clang++ CFLAGS="-Wall -Wextra -fsanitize=address -O1 -fno-omit-frame-pointer -g" CXXFLAGS=$CFLAGS ./configure
+```shell
+$ CC=clang CXX=clang++ CFLAGS="-Wall -Wextra -fsanitize=address -O1 -fno-omit-frame-pointer -g" CXXFLAGS=$CFLAGS ./configure
 ```
 
 ## Clang-Format
 
-```bash
-clang-format -style=file -i src/*.[ch] src/*.cpp
+```shell
+$ clang-format -style=file -i src/*.[ch] src/*.cpp
 ```
 
 ## Cppcheck
 
-```bash
-cppcheck --enable=all --inline-suppr --inconclusive --suppress=missingIncludeSystem --verbose src/*.[ch] src/*.cpp
+```shell
+$ cppcheck --enable=all --inline-suppr --inconclusive --suppress=missingIncludeSystem --verbose src/*.[ch] src/*.cpp
 ```
 
 ## Valgrind
 
-```bash
-valgrind --tool=memcheck --leak-check=full --error-exitcode=1 -s src/main 99
+```shell
+$ valgrind --tool=memcheck --leak-check=full --error-exitcode=1 -s src/main 99
 ```
 
 ## Install Git Hooks
 
-```bash
-scripts/install-git-hooks
+```shell
+$ scripts/install-git-hooks
 ```
 
 ## Plot
 
-```bash
-make plot
+```shell
+$ make plot
 ```
+
 ## References
 
 [2020 年春季 Linux 核心設計課程作業 —— fibdrv - HackMD](https://hackmd.io/@sysprog/linux2020-fibdrv)
