@@ -34,7 +34,6 @@ $ sudo apt-get install autotools-dev autoconf automake libtool
 ```shell
 $ xcode-select --install
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
 $ brew install pkg-config gnuplot
 $ brew install gmp glib
 $ brew install aspell clang-format cppcheck
